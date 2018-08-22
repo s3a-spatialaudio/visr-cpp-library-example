@@ -44,7 +44,44 @@ public:
 private:
   visr::AudioInput mInput;
 
-  visr::AudioInput mOutput;
+  visr::AudioOutput mOutput;
+
+  SampleType mAttackCoefficient;
+
+  SampleType mReleaseCoefficient;
+
+  SampleType mCompressorThreshold;
+
+  SampleType mCompressorSlopeDB;
+
+  SampleType mLimiterThreshold;
+
+  SampleType mLimiterSlopeDB;
+
+  visr::efl::BasicVector<SampleType> mControlValues;
+
+  visr::efl::BasicVector<SampleType> mGainValues;
+
+  visr::efl::BasicVector<SampleType> mPastPeakValues;
+
+  visr::efl::BasicVector<SampleType> mPastRmsValues;
+
+  /**
+   * Compute a filter coefficient for a attack or release  coefficient based on a
+   * time constant.
+   */
+  SampleType timeConstantToCoefficient( SampleType timeConstant ) const;
+
+  /**
+   * Compute a sequence of peak measurement values based on the attack/release time settings.
+   * @param [in] inputValues
+   * @param [in,out] state
+   */
+  void computePeakValues( SampleType const * const inputValues,
+                          SampleType * const outputValues,
+                          std::size_t numberOfSamples,
+                          SampleType & state );
+
 
   /*
   visr::ParameterInput< visr::pml::DoubleBufferingProtocol, visr::pml::ScalarParameter<SampleType> > mListenerInput;
