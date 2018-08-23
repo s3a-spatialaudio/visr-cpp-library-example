@@ -57,7 +57,12 @@ void Compressor::process()
     // should be a vectorised library call
     std::for_each( mControlValues.data(), mControlValues.data()+numberOfSamples,
                   []( SampleType & val ){ val = static_cast<SampleType>(20.0) * std::log10( val ); } );
-
+#if 1
+    visr::efl::ErrorCode const err = visr::efl::vectorCopy( mControlValues.data(),
+                                                           mOutput[chIdx],
+                                                           numberOfSamples,
+                                                           visr::cVectorAlignmentSamples );
+#else
     for( std::size_t sampleIdx{0}; sampleIdx < numberOfSamples; ++sampleIdx )
     {
       if( mControlValues[sampleIdx] > mLimiterThreshold )
@@ -80,6 +85,7 @@ void Compressor::process()
                                                                 mOutput[chIdx],
                                                                 numberOfSamples,
                                                                 visr::cVectorAlignmentSamples );
+#endif
     if( err != visr::efl::noError )
     {
       status( visr::StatusMessage::Error, "Error while multiplying control gain.",
@@ -91,7 +97,7 @@ void Compressor::process()
 Compressor::SampleType
 Compressor::timeConstantToCoefficient( SampleType timeConstant ) const
 {
-  SampleType const arg{ -2.2e-3f / timeConstant * static_cast<SampleType>(samplingFrequency()) };
+  SampleType const arg{ -2.2f / timeConstant / static_cast<SampleType>(samplingFrequency()) };
   return static_cast<SampleType>(1.0) - std::exp( arg );
 }
 
