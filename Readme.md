@@ -1,6 +1,5 @@
-=================
-CTCDSP repository
-=================
+DRC-VISR --- Tutorial example for creating an external C++ library to extend the VISR framework
+===============================================================================================
 
 Copyright Andreas Franck <a.franck@soton.ac.uk> 2018 --- All rights reserved.
 
@@ -9,19 +8,21 @@ Copyright Institute of Sound and Vibration Research 2018 --- All rights reserved
 Overview
 ========
 
-The **CTCDSP** repository provides C++ implementations for rendering listener-adaptive crosstalk cancellation (transaural audio) for loudspeaker arrays.
+The **DRC-VISR** repository is a tutorial example to explain how to extend the VISR framework with code implemented in C++.
 
-It is a basically a port of the **CTC-VISR** Python library to C++
+It contains a set of simple components, implementing dynamic range control (DRC) algorithms as compressors, expanders, etc. 
 
-It is built upon the `VISR <http://cvssp.org/data/s3a/public/VISR/> _` framework.
-The functionality is primarily provided as VISR components.
 
 Contents
 ========
 
 The following components are provided:
 
-ctc.CoefficientCalculator
+* libdrccomponents: A C++ library containing a set of VISR components. These can be used to build C++ binaries such as standalone renderers, DAW plugins, or Max/MSP external.
+   * Compressor: A multichannel compressor with an optional limiter setting, implemented as an atomic VISR component. 
+   * 
+
+
   Computes filters and beamforming gains and delays based on the array geometry and the listener position(s).
 ctc.ListenerPositionDecoder
   Converts JSON messages (e.g., as received througha network connection) to the internal format for listener position messages (3 x numberOfEars MatrixParameterFloat objects)
@@ -37,14 +38,12 @@ Requirements
 ------------
 
 * CMake (description uses the CMake GUI) 
-* Eigen
-* Boost
 * VISR (either as an installed package or a build tree)
 
 Installation
 ------------
 
-* Clone the ctc-dsp repository
+* Clone the drc-visr repository
 * Create a build directory
 * In the CMake GUI, set the source and the build directory.
 * Click the 'Configure' button
@@ -72,7 +71,7 @@ The ctcdsp package can be used in different ways:
 Linking to external applications
 --------------------------------
 
-The project creates a library, ctccomponents, that contains all atomic and composite components as C++ objects. These can be used and linked in other applications.
+The project creates a library, libdrccomponents, that contains all atomic and composite components as C++ objects. These can be used and linked in other applications.
 
 TODO: Provide proper visibility settings and install the public headers.
 
@@ -81,21 +80,11 @@ Usage in Python
 
 All components (atomic and composite) can be used from Python, e.g., to create more complex signal flows or to run the CTC rendering in realtime.
 To this end, Python wrappers are provided for these components.
-They are contained in the Python module **ctc**.
-
-To use, import the **ctc** package
+They are contained in the Python module **drc-visr** and can be used in exactly the same way as builtin VISR components (contained in the **rcl** library) or Python-based components
 
 ::
 
-  import ctc
-
-  calc = ctc.CoefficientCalculator( ... )
-
-or:
-
-::
-
-  from ctc import RealtimeCtcRenderer
+  from drc import Compressor
 
 Standalone realtime renderer
 ----------------------------
@@ -106,4 +95,4 @@ The full list of options can be displayed by
 
 ::
 
-  ./ctcrenderer --help
+  ./standalone/standalone --help

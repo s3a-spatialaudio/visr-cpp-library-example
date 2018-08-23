@@ -34,9 +34,9 @@ public:
 			 SampleType attackTimeSeconds,
 			 SampleType releaseTimeSeconds,
                          SampleType compressorThresholdDB,
-                         SampleType compressorSlopeDB, 
+                         SampleType compressorSlopeDBperDec,
 	                 SampleType limiterThresholdDB = std::numeric_limits<SampleType>::infinity(), 
-                         SampleType limiterGainDB = 0.0f );
+                         SampleType limiterGainDBperDec = 0.0f );
 
   virtual ~Compressor();
 
@@ -52,11 +52,11 @@ private:
 
   SampleType mCompressorThreshold;
 
-  SampleType mCompressorSlopeDB;
+  SampleType mCompressorSlope;
 
   SampleType mLimiterThreshold;
 
-  SampleType mLimiterSlopeDB;
+  SampleType mLimiterSlope;
 
   visr::efl::BasicVector<SampleType> mControlValues;
 

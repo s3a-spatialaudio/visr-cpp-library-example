@@ -4,18 +4,15 @@
 
 #include <pybind11/pybind11.h>
 
-namespace ctcdsp
+namespace drc
 {
 namespace python
 {
-void exportCoefficientCalculator( pybind11::module & m );
-void exportCtcRenderer( pybind11::module & m );
-void exportListenerPositionDecoder( pybind11::module & m );
-void exportRealtimeCtcRenderer( pybind11::module & m );
+void exportCompressor( pybind11::module & m );
 }
 }
 
-PYBIND11_MODULE( ctc, m )
+PYBIND11_MODULE( drc_visr, m )
 {
   visr::pml::initialiseParameterLibrary();
 
@@ -23,11 +20,8 @@ PYBIND11_MODULE( ctc, m )
   pybind11::module::import( "visr" );
   pybind11::module::import( "pml" );
 
-  using namespace ctcdsp::python;
+  using namespace drc::python;
 
   // Export the communication protocols
-  exportCoefficientCalculator( m );
-  exportCtcRenderer( m );
-  exportListenerPositionDecoder( m );
-  exportRealtimeCtcRenderer( m );
+  exportCompressor( m );
 }

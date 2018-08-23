@@ -13,7 +13,7 @@ namespace drc
 namespace python
 {
 
-void exportCoefficientCalculator( pybind11::module & m )
+void exportCompressor( pybind11::module & m )
 {
   namespace py = pybind11;
 

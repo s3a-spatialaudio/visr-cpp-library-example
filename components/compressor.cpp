@@ -32,14 +32,12 @@ Compressor::Compressor( visr::SignalFlowContext & context,
   , mAttackCoefficient( timeConstantToCoefficient(attackTimeSeconds) )
   , mReleaseCoefficient( timeConstantToCoefficient(releaseTimeSeconds) )
   , mCompressorThreshold( compressorThresholdDB )
-  , mCompressorSlopeDB( compressorSlopeDBperDec )
+  , mCompressorSlope( compressorSlopeDBperDec )
   , mLimiterThreshold( limiterThresholdDB)
-  , mLimiterSlopeDB( limiterGainDBperDec )
+  , mLimiterSlope( limiterGainDBperDec )
   , mControlValues( context.period(), visr::cVectorAlignmentSamples )
   , mGainValues( context.period(), visr::cVectorAlignmentSamples )
-
   , mPastPeakValues( numberOfChannels, visr::cVectorAlignmentSamples )
-
   , mPastRmsValues( numberOfChannels, visr::cVectorAlignmentSamples )
 {
 
@@ -62,9 +60,17 @@ void Compressor::process()
 
     for( std::size_t sampleIdx{0}; sampleIdx < numberOfSamples; ++sampleIdx )
     {
-
+      if( mControlValues[sampleIdx] > mLimiterThreshold )
+      {
+        mControlValues[sampleIdx] = mLimiterThreshold + (mLimiterThreshold - mControlValues[sampleIdx]) * mLimiterSlope;
+      }
+      else if( mControlValues[sampleIdx] > mCompressorThreshold )
+      {
+        mControlValues[sampleIdx] = mCompressorThreshold + (mCompressorThreshold - mControlValues[sampleIdx]) * mCompressorSlope;
+      }
     }
-
+    // Log-> linear conversion
+    // This should be a vectorised function call (e.g., from libefl)
     std::for_each( mControlValues.data(), mControlValues.data()+numberOfSamples,
                   []( SampleType & val ){ val =  std::pow( static_cast<SampleType>(10.0),
                                                            static_cast<SampleType>(0.05)*val ); } );

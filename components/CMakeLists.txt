@@ -25,6 +25,8 @@ target_link_libraries( components PUBLIC VISR::rbbl_shared )
 # if we build a static library.
 set_property(TARGET components PROPERTY POSITION_INDEPENDENT_CODE ON)
 
+set_target_properties(components PROPERTIES OUTPUT_NAME drccomponents )
+
 # Set public headers to be installed for the shared target.
 # Because the headers are the same for the static library, the headers are only
 # installled once.
