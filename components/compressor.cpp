@@ -17,24 +17,23 @@ namespace components
 {
 
 Compressor::Compressor( visr::SignalFlowContext & context,
-			char const * name,
-			visr::CompositeComponent * parent, 
-			std::size_t numberOfChannels,
-			SampleType attackTimeSeconds,
-			SampleType releaseTimeSeconds,
-			SampleType compressorThresholdDB,
-			SampleType compressorSlopeDBperDec,
-			SampleType limiterThresholdDB /*= std::numeric_limits<SampleType>::infinity()*/, 
-			SampleType limiterGainDBperDec /*= 0.0f*/ )
+                   			char const * name,
+                        visr::CompositeComponent * parent,
+                        std::size_t numberOfChannels,
+                        SampleType compressorThresholdDB,
+                        SampleType compressorSlopeDBperDec,
+                        SampleType averagingTimeSeconds,
+                        SampleType attackTimeSeconds,
+                        SampleType releaseTimeSeconds
+                      )
   : visr::AtomicComponent( context, name, parent )
   , mInput( "in", *this, numberOfChannels )
   , mOutput( "out", *this, numberOfChannels )
+  , mAveragingCoefficient( timeConstantToCoefficient(averagingTimeSeconds) )
   , mAttackCoefficient( timeConstantToCoefficient(attackTimeSeconds) )
   , mReleaseCoefficient( timeConstantToCoefficient(releaseTimeSeconds) )
   , mCompressorThreshold( compressorThresholdDB )
   , mCompressorSlope( compressorSlopeDBperDec )
-  , mLimiterThreshold( limiterThresholdDB)
-  , mLimiterSlope( limiterGainDBperDec )
   , mControlValues( context.period(), visr::cVectorAlignmentSamples )
   , mGainValues( context.period(), visr::cVectorAlignmentSamples )
   , mPastPeakValues( numberOfChannels, visr::cVectorAlignmentSamples )
@@ -101,30 +100,46 @@ Compressor::timeConstantToCoefficient( SampleType timeConstant ) const
   return static_cast<SampleType>(1.0) - std::exp( arg );
 }
 
-
-void Compressor::computePeakValues( SampleType const * const inputValues,
-                                   SampleType * const outputValues,
-                                   std::size_t numberOfSamples,
-                                   SampleType & state )
+/*static*/ void Compressor::
+computePeakValuesInplace( SampleType * const values,
+                          SampleType attackCoefficient,
+                          SampleType releaseCoefficient,
+                          std::size_t numberOfSamples,
+                          SampleType & state )
 {
   SampleType xn = state;
   for( std::size_t sampleIdx{0}; sampleIdx < numberOfSamples; ++sampleIdx )
   {
-    SampleType const xAbs{ std::abs(inputValues[sampleIdx]) };
+    SampleType const xAbs{ std::abs(values[sampleIdx]) };
     if( xAbs > xn )
     {
-      xn = (static_cast<SampleType>(1.0)-mAttackCoefficient)*xn
+      xn = (static_cast<SampleType>(1.0)-attackCoefficient)*xn
         + mAttackCoefficient * xAbs;
     }
     else
     {
-      xn *= (static_cast<SampleType>(1.0)-mReleaseCoefficient);
+      xn *= (static_cast<SampleType>(1.0)-releaseCoefficient);
     }
-    outputValues[sampleIdx] = xn;
+    values[sampleIdx] = xn;
   }
   state = xn;
 }
 
+/*static*/ void Compressor::
+averagingFilter( SampleType const * const input,
+                 SampleType * const output,
+                 SampleType filterCoeff,
+                 std::size_t numberOfSamples,
+                 SampleType & state )
+{
+  SampleType const oneMinusC{ static_cast<SampleType>(1.0) - filterCoeff };
+  for( std::size_t sampleIdx{0}; sampleIdx < numberOfSamples; ++sampleIdx )
+  {
+    SampleType const xPwr = input[sampleIdx] * input[sampleIdx];
+    state = oneMinusC * state + filterCoeff * xPwr;
+    output[sampleIdx] = state;
+  }
+}
 
 } // namespace components
 } // namespace drc

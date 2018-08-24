@@ -28,15 +28,15 @@ public:
   using SampleType = visr::SampleType;
 
   Compressor( visr::SignalFlowContext & context,
-                         char const * name,
-                         visr::CompositeComponent * parent, 
-                         std::size_t numberOfChannels,
-			 SampleType attackTimeSeconds,
-			 SampleType releaseTimeSeconds,
-                         SampleType compressorThresholdDB,
-                         SampleType compressorSlopeDBperDec,
-	                 SampleType limiterThresholdDB = std::numeric_limits<SampleType>::infinity(), 
-                         SampleType limiterGainDBperDec = 0.0f );
+              char const * name,
+              visr::CompositeComponent * parent,
+              std::size_t numberOfChannels,
+              SampleType compressorThresholdDB,
+              SampleType compressorSlopeDBperDec,
+              SampleType averagingTimeSeconds,
+              SampleType attackTimeSeconds,
+			        SampleType releaseTimeSeconds
+            );
 
   virtual ~Compressor();
 
@@ -46,6 +46,8 @@ private:
 
   visr::AudioOutput mOutput;
 
+  SampleType mAveragingCoefficient;
+
   SampleType mAttackCoefficient;
 
   SampleType mReleaseCoefficient;
@@ -54,17 +56,13 @@ private:
 
   SampleType mCompressorSlope;
 
-  SampleType mLimiterThreshold;
-
-  SampleType mLimiterSlope;
-
   visr::efl::BasicVector<SampleType> mControlValues;
 
   visr::efl::BasicVector<SampleType> mGainValues;
 
-  visr::efl::BasicVector<SampleType> mPastPeakValues;
-
   visr::efl::BasicVector<SampleType> mPastRmsValues;
+
+  visr::efl::BasicVector<SampleType> mPastPeakValues;
 
   /**
    * Compute a filter coefficient for a attack or release  coefficient based on a
@@ -77,21 +75,17 @@ private:
    * @param [in] inputValues
    * @param [in,out] state
    */
-  void computePeakValues( SampleType const * const inputValues,
-                          SampleType * const outputValues,
-                          std::size_t numberOfSamples,
-                          SampleType & state );
+  static void computePeakValuesInplace( SampleType * const values,
+                                        SampleType attackCoefficient,
+                                        SampleType releaseCoefficient,
+                                        std::size_t numberOfSamples,
+                                        SampleType & state );
 
-
-  /*
-  visr::ParameterInput< visr::pml::DoubleBufferingProtocol, visr::pml::ScalarParameter<SampleType> > mListenerInput;
-
-  visr::ParameterOutput< visr::pml::DoubleBufferingProtocol, visr::pml::MatrixParameter<SampleType> > mGainOutput;
-
-  visr::ParameterOutput< visr::pml::DoubleBufferingProtocol, visr::pml::MatrixParameter<SampleType> > mDelayOutput;
-
-  visr::ParameterOutput< visr::pml::MessageQueueProtocol, visr::pml::IndexedVectorFloatType > mFilterOutput;
-  */
+  static void averagingFilter( SampleType const * const input,
+                               SampleType * const output,
+                               SampleType filterCoeff,
+                               std::size_t numberOfSamples,
+                               SampleType & state );
 };
 
 } // namespace components
