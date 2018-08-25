@@ -32,10 +32,10 @@ public:
               visr::CompositeComponent * parent,
               std::size_t numberOfChannels,
               SampleType compressorThresholdDB,
-              SampleType compressorSlopeDBperDec,
+              SampleType compressorSlope,
               SampleType averagingTimeSeconds,
               SampleType attackTimeSeconds,
-			        SampleType releaseTimeSeconds
+              SampleType releaseTimeSeconds
             );
 
   virtual ~Compressor();
@@ -72,14 +72,15 @@ private:
 
   /**
    * Compute a sequence of peak measurement values based on the attack/release time settings.
+   * Note: The input values are assumed to be positive
    * @param [in] inputValues
    * @param [in,out] state
    */
-  static void computePeakValuesInplace( SampleType * const values,
-                                        SampleType attackCoefficient,
-                                        SampleType releaseCoefficient,
-                                        std::size_t numberOfSamples,
-                                        SampleType & state );
+  static void peakFilterInplace( SampleType * const values,
+                                 SampleType attackCoefficient,
+                                 SampleType releaseCoefficient,
+                                 std::size_t numberOfSamples,
+                                 SampleType & state );
 
   static void averagingFilter( SampleType const * const input,
                                SampleType * const output,

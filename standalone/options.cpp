@@ -24,14 +24,13 @@ Options::Options()
 
   registerOption<std::size_t>( "number-of-channels,n", "Number of channels (default=1)" );
 
-  registerOption<double>( "attack-time,a", "Attack time [seconds], (default=0.002 s)" );
-  registerOption<double>( "release-time,r", "Release time [seconds], (default=0.01 s)" );
+  registerOption<float>( "averaging-time,m", "Attack time [seconds], (default=0.01 s)" );
+  registerOption<float>( "attack-time,a", "Attack time [seconds], (default=0.003 s)" );
+  registerOption<float>( "release-time,r", "Release time [seconds], (default=0.1 s)" );
   
-  registerOption<double>( "compressor-threshold,t", "Compressor threshold [dB], (default= -20 dB)" );
-  registerOption<double>( "compressor-slope,s", "Compressor slope [dB/dec], (default= -20 dB)" );
+  registerOption<float>( "compressor-threshold,t", "Compressor threshold [dB], (default= -20 dB)" );
+  registerOption<float>( "compressor-slope,s", "Compressor slope [dB/dec], (default= 10 dB)" );
 
-  registerOption<double>( "limiter-threshold", "Limiter threshold [dB], (default= inf dB, i.e., limiting disabled)" );
-  registerOption<double>( "limiter-slope", "Limiter slope [dB/dec], (default= -60 dB)" );
 }
 
 Options::~Options() = default;

@@ -5,7 +5,7 @@
 
 CMAKE_MINIMUM_REQUIRED( VERSION 3.0.0 )
 
-PROJECT( ctc-dsp CXX )
+PROJECT( drc_visr CXX )
 
 set (CMAKE_CXX_STANDARD 14)
 
@@ -31,7 +31,7 @@ if( WIN32 ) # Covers 64-bit Windows as well
 endif( WIN32 )
 
 # Import VISR targets (libraries and include files) 
-find_package( VISR 0.10.0 REQUIRED ) 
+find_package( VISR 0.9.0 REQUIRED ) 
 
 add_definitions("-DBOOST_ALL_DYN_LINK")
 add_definitions("-DBOOST_ALL_NO_LIB")

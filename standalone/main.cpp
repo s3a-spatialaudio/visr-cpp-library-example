@@ -64,13 +64,11 @@ int main( int argc, char const * const * argv )
     }
 
     std::size_t const numberOfChannels = cmdLineOptions.getDefaultedOption<std::size_t>("number-of-channels", 1 );
+    SampleType const averagingTimeSeconds = cmdLineOptions.getDefaultedOption<SampleType>("averaging-time", 0.010f );
     SampleType const attackTimeSeconds = cmdLineOptions.getDefaultedOption<SampleType>("attack-time", 0.002f );
-    SampleType const releaseTimeSeconds  = cmdLineOptions.getDefaultedOption<SampleType>("release-time", 0.01f );
+    SampleType const releaseTimeSeconds  = cmdLineOptions.getDefaultedOption<SampleType>("release-time", 0.1f );
     SampleType const compressorThresholdDB = cmdLineOptions.getDefaultedOption<SampleType>("compressor-threshold", -20.0f );
     SampleType const compressorSlopeDB = cmdLineOptions.getDefaultedOption<SampleType>("compressor-slope", 10.0f );
-    SampleType const limiterThresholdDB = cmdLineOptions.getDefaultedOption<SampleType>("limiter-threshold",
-                                                                                        std::numeric_limits<SampleType>::infinity() );
-    SampleType const limiterGainDB = cmdLineOptions.getDefaultedOption<SampleType>("limiter-slope", 1.0f );
 
     // ============================================================================================
     // Audio configuration
@@ -113,12 +111,11 @@ int main( int argc, char const * const * argv )
 
     Compressor renderer( context, "Compressor", nullptr,
                         numberOfChannels,
-                        attackTimeSeconds,
-                        releaseTimeSeconds,
                         compressorThresholdDB,
                         compressorSlopeDB,
-                        limiterThresholdDB,
-                        limiterGainDB
+                        averagingTimeSeconds,
+                        attackTimeSeconds,
+                        releaseTimeSeconds
                         );
 
     visr::audiointerfaces::AudioInterface::Configuration const
@@ -137,7 +134,7 @@ int main( int argc, char const * const * argv )
     audioInterface->start();
 
     // Rendering runs until q<Return> is entered on the console.
-    std::cout << "Realtime CTC renderer ruunning. Press \"q<Return>\" or Ctrl-C to quit." << std::endl;
+    std::cout << "Realtime CTC renderer running. Press \"q<Return>\" or Ctrl-C to quit." << std::endl;
     char c;
     do
     {
