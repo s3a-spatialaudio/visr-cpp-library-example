@@ -33,6 +33,10 @@ endif( WIN32 )
 # Import VISR targets (libraries and include files) 
 find_package( VISR 0.9.0 REQUIRED ) 
 
+add_definitions("-DBOOST_ALL_DYN_LINK")
+add_definitions("-DBOOST_ALL_NO_LIB")
+find_package( Boost REQUIRED COMPONENTS filesystem )
+
 add_subdirectory( components )
 
 if( BUILD_PYTHON_BINDINGS )
@@ -40,5 +44,5 @@ if( BUILD_PYTHON_BINDINGS )
 endif( BUILD_PYTHON_BINDINGS )
 
 if( BUILD_STANDALONE_RENDERER )
-  add_subdirectory( standalone )
+  add_subdirectory( standalone )  
 endif( BUILD_STANDALONE_RENDERER )
