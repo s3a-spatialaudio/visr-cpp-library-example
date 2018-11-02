@@ -6,9 +6,9 @@
 add_executable( standalone main.cpp options.hpp options.cpp )
 
 target_link_libraries(standalone components )
-target_link_libraries(standalone VISR::apputilities_static )
-target_link_libraries(standalone VISR::audiointerfaces_static )
-target_link_libraries(standalone VISR::rrl_static )
+target_link_libraries(standalone VISR::apputilities_shared )
+target_link_libraries(standalone VISR::audiointerfaces_shared )
+target_link_libraries(standalone VISR::rrl_shared )
 
 target_link_libraries( standalone Boost::filesystem )
 
