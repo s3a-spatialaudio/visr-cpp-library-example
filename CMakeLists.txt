@@ -33,12 +33,7 @@ if( WIN32 ) # Covers 64-bit Windows as well
 endif( WIN32 )
 
 # Import VISR targets (libraries and include files) 
-find_package( VISR 0.9.0 REQUIRED ) 
-
-# TODO: Remove these dependencies after this glitch has been fixed in the exported VISR targets.
-add_definitions("-DBOOST_ALL_DYN_LINK")
-add_definitions("-DBOOST_ALL_NO_LIB")
-find_package( Boost REQUIRED COMPONENTS filesystem )
+find_package( VISR 0.11.0 REQUIRED ) 
 
 add_subdirectory( components )
 
