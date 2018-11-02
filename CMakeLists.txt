@@ -20,6 +20,8 @@ endif( POLICY CMP0074)
 option( BUILD_PYTHON_BINDINGS "Whether to build a Python module to use the defined components from Python" ON )
 option( BUILD_STANDALONE_RENDERER "Whether to build a standalone realtime renderer" ON )
 
+option( BUILD_DOCUMENTATION "Whether the documentation is generated. (Requires Doxygen and Sphinx)" OFF )
+
 # Additional CMake functionality in separate files.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake_modules")
 
@@ -33,6 +35,7 @@ endif( WIN32 )
 # Import VISR targets (libraries and include files) 
 find_package( VISR 0.9.0 REQUIRED ) 
 
+# TODO: Remove these dependencies after this glitch has been fixed in the exported VISR targets.
 add_definitions("-DBOOST_ALL_DYN_LINK")
 add_definitions("-DBOOST_ALL_NO_LIB")
 find_package( Boost REQUIRED COMPONENTS filesystem )
@@ -46,3 +49,7 @@ endif( BUILD_PYTHON_BINDINGS )
 if( BUILD_STANDALONE_RENDERER )
   add_subdirectory( standalone )  
 endif( BUILD_STANDALONE_RENDERER )
+
+if( BUILD_DOCUMENTATION )
+  add_subdirectory( doc )
+endif( BUILD_DOCUMENTATION )
