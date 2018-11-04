@@ -51,7 +51,7 @@ PROJECT_BRIEF          = "Versatile Interactive Scene Renderer"
 # and the maximum width should not exceed 200 pixels. Doxygen will copy the logo
 # to the output directory.
 
-PROJECT_LOGO           = "@CMAKE_SOURCE_DIR@/cmake_modules/s3a_logo.png"
+# PROJECT_LOGO           = "@CMAKE_SOURCE_DIR@/
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
@@ -842,7 +842,7 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-EXCLUDE                =
+EXCLUDE                = "@CMAKE_SOURCE_DIR@/3rd"
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded

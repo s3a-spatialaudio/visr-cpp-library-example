@@ -35,7 +35,7 @@ add_custom_command( OUTPUT ${doxy_xml_index_file}
 		  # DEPENDS ${doxy_extra_files} # TODO <AF> Decide whether the subprojects should be added as dependency.
 		  COMMENT "Generating Doxygen HTML and XML documentation")
 		  
-add_custom_target( doxygen-doc DEPENDS ${doxy_html_index_file}  )
+add_custom_target( doxygen-doc DEPENDS ${doxy_xml_index_file}  )
 
 # "Meta-target" to trigger build of all documentation outputs
 add_custom_target( doc DEPENDS doxygen-doc )
@@ -104,7 +104,7 @@ function( PdfDocBuild targetName sourceDir outputDir depends )
     COMMAND ${PDFLATEX_COMPILER} visr-cxx-tutorial
     COMMAND ${PDFLATEX_COMPILER} visr-cxx-tutorial
 	COMMAND ${PDFLATEX_COMPILER} visr-cxx-tutorial
-	COMMAND ${CMAKE_COMMAND} -E rename ${outputDir}/latex/visr-cxx-tutorial.pdf ${outputDir}/${targetName}-${VISR_MAJOR_VERSION}.${VISR_MINOR_VERSION}.${VISR_PATCH_VERSION}.pdf
+	COMMAND ${CMAKE_COMMAND} -E rename ${outputDir}/latex/visr-cxx-tutorial.pdf ${outputDir}/visr-cxx-tutorial.pdf
     WORKING_DIRECTORY ${outputDir}/latex
     DEPENDS ${outputDir}/latex/visr-cxx-tutorial.tex
     COMMENT "PDF compilation for target ${targetName}-pdf." )

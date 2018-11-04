@@ -6,7 +6,11 @@ sys.path.append( "@sphinx_breathe_path@")
 
 extensions = [
     "breathe",  # Doxygen-based C++ documentation gathering
-    # "sphinx.ext.autosectionlabel"
+    "sphinx.ext.todo",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.napoleon", # Markdown autodoc like in Numpy docu.
+    "sphinx.ext.mathjax",
+    "sphinxcontrib.bibtex",
 ]
 
 # The suffix(es) of source filenames.
