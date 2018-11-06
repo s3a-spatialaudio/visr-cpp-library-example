@@ -32,8 +32,8 @@ if( WIN32 ) # Covers 64-bit Windows as well
   add_definitions( "/wd4996" )
 endif( WIN32 )
 
-# Import VISR targets (libraries and include files) 
-find_package( VISR 0.11.0 REQUIRED ) 
+# Import VISR targets (libraries and include files)
+find_package( VISR 0.11.0 REQUIRED )
 
 add_subdirectory( components )
 
@@ -42,7 +42,7 @@ if( BUILD_PYTHON_BINDINGS )
 endif( BUILD_PYTHON_BINDINGS )
 
 if( BUILD_STANDALONE_RENDERER )
-  add_subdirectory( standalone )  
+  add_subdirectory( standalone )
 endif( BUILD_STANDALONE_RENDERER )
 
 if( BUILD_DOCUMENTATION )
