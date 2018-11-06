@@ -22,11 +22,28 @@ namespace drc
 namespace components
 {
 
+/**
+ * Audio processing component for multichannel dynamic range compression.
+ */
 class Compressor: public visr::AtomicComponent
 {
 public:
   using SampleType = visr::SampleType;
 
+  /**
+   * Constructor.
+   * @param context Object containing standard signal processing parameters
+   * (sampling rate, block size).
+   * @param name
+   * @param parent The containing component, or nullptr if this is the top-level component.
+   * @param numberOfChannels The umber of channels that are processed
+   * simultaneously.
+   * @param compressorThresholdDB The level [in dB] where the compression sets in.
+   * @param compressorSlope The slope of the compressor, in dB/octave.
+   * @param averagingTimeSeconds,
+   * @param attackTimeSeconds,
+   * @param releaseTimeSeconds
+   */
   Compressor( visr::SignalFlowContext & context,
               char const * name,
               visr::CompositeComponent * parent,
@@ -73,7 +90,9 @@ private:
   /**
    * Compute a sequence of peak measurement values based on the attack/release time settings.
    * Note: The input values are assumed to be positive
-   * @param [in] inputValues
+   * @param [in,out] values
+   * @param attackCoefficient
+   * @param releaseCoefficient 
    * @param [in,out] state
    */
   static void peakFilterInplace( SampleType * const values,
