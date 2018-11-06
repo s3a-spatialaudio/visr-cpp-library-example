@@ -12,7 +12,7 @@ void exportCompressor( pybind11::module & m );
 }
 }
 
-PYBIND11_MODULE( drc_visr, m )
+PYBIND11_MODULE( visr_drc, m )
 {
   visr::pml::initialiseParameterLibrary();
 

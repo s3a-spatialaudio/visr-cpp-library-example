@@ -17,7 +17,7 @@ import visr
 # import pml
 import rrl
 
-import drc_visr
+import visr_drc
 
 fs = 48000
 blockSize = 64
@@ -30,7 +30,7 @@ numSamples = blockSize * numIterations
 
 numChannels = 32
 
-comp = drc_visr.Compressor( context, "Compressor", None,
+comp = visr_drc.Compressor( context, "Compressor", None,
                             numberOfChannels = numChannels,
                             averagingTimeSeconds=0.01,
                             attackTimeSeconds = 0.001,
