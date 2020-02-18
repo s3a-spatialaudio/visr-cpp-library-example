@@ -36,8 +36,8 @@ Compressor::Compressor( visr::SignalFlowContext & context,
   , mCompressorSlope( compressorSlope )
   , mControlValues( context.period(), visr::cVectorAlignmentSamples )
   , mGainValues( context.period(), visr::cVectorAlignmentSamples )
-  , mPastPeakValues( numberOfChannels, visr::cVectorAlignmentSamples )
   , mPastRmsValues( numberOfChannels, visr::cVectorAlignmentSamples )
+  , mPastPeakValues( numberOfChannels, visr::cVectorAlignmentSamples )
 {
 }
  
