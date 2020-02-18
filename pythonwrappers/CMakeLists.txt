@@ -23,7 +23,7 @@ compressor.cpp
 
 set(PROJECT_NAME pythonwrappers)
 
-set(MODULE_NAME drc_visr )
+set(MODULE_NAME visr_drc )
 
 pybind11_add_module( ${PROJECT_NAME} MODULE ${SOURCES} )
 
