@@ -2,19 +2,57 @@
 # Copyright Institute of Sound and Vibration Research - All rights reserved
 
 
-set( CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/3rd/pybind11/include/pybind11 )
-find_package( PythonLibs REQUIRED )
+# Helper function to extract a value from a key-value pair
+# within the INTERFACE_COMPILE_DEFINITIONS property of a CMake target.
+function( getValueFromCompileDefinition target key result )
+  get_target_property( DEFINITION_LIST ${target}
+    INTERFACE_COMPILE_DEFINITIONS )
+  list( FILTER DEFINITION_LIST INCLUDE REGEX ${key}=* )
+  list( LENGTH DEFINITION_LIST NUM_MATCHES )
+  if( NUM_MATCHES EQUAL 1 )
+    list( GET DEFINITION_LIST 0 KEYVAL )
+    string( REGEX REPLACE ".*=(.*)" "\\1" VAL ${KEYVAL} )
+  else( NUM_MATCHES EQUAL 1 )
+    message( WARNING "Could not retrieve value for key " ${key}
+    " from target " ${target} "'s compile definitions.")
+    set( ${VAL} "" )
+  endif( NUM_MATCHES EQUAL 1 )
+  set( ${result} ${VAL} PARENT_SCOPE )
+endfunction()
 
-# Define the file name extension for Python externals.
-if( WIN32 )
-  set( PYTHON_MODULE_EXTENSION ".pyd" )
-elseif( APPLE )
-  set( PYTHON_MODULE_EXTENSION ".so" )
-else( WIN32 )
-  set( PYTHON_MODULE_EXTENSION ${CMAKE_SHARED_LIBRARY_SUFFIX} )
-endif( WIN32 )
+# Determine value of VISR PYBIND11_DIR.
+# This is encoded within the interface compile definitions of target pythonsupport_shared
+function( getPybind11Dir target result )
+  getValueFromCompileDefinition( ${target} PYBIND11_DIR RES )
+  set( ${result} ${RES} PARENT_SCOPE )
+endfunction()
 
-include( pybind11Tools )
+# Determine the Pybind11 version used to compile VISR.
+function( getVisrPybind11Version target result )
+  getValueFromCompileDefinition( ${target} VISR_PYBIND11_VERSION RES )
+  set( ${result} ${RES} PARENT_SCOPE )
+endfunction()
+
+# Initialise PYBIND11_DIR with the value sensed from the respective VISR
+# directory.
+getPybind11Dir( VISR::pythonsupport_shared VISR_PYBIND_DIR )
+set( PYBIND11_DIR ${VISR_PYBIND_DIR} CACHE PATH
+"Location of the Pybind11 library. Defaults to the one provided by the VISR installation." )
+
+# The second parameter (binary dir) is needed because PYBIND11_DIR
+# is posibly outside the project directory.
+add_subdirectory( ${PYBIND11_DIR} ${CMAKE_BINARY_DIR}/3rd/pybind11
+  EXCLUDE_FROM_ALL )
+
+# Check whether the pybind11 version used to build the VISR Python externals is
+# compatible with the one used for building this libreary.
+getVisrPybind11Version( VISR::pythonsupport_shared VISR_PYBIND11_VERSION )
+message( STATUS "VISR_PYBIND11_VERSION: " ${VISR_PYBIND11_VERSION})
+if( NOT ${VISR_PYBIND11_VERSION} VERSION_EQUAL
+  ${PYBIND11_VERSION_MAJOR}.${PYBIND11_VERSION_MINOR}.${PYBIND11_VERSION_PATCH} )
+  message( WARNING "Pybind11 version used in VISR differs from version used for library."
+  " This might cause problems." )
+endif()
 
 set( SOURCES
 drcmodule.cpp
@@ -23,11 +61,9 @@ compressor.cpp
 
 set(PROJECT_NAME pythonwrappers)
 
-set(MODULE_NAME visr_drc )
+set(MODULE_NAME visr_drc)
 
 pybind11_add_module( ${PROJECT_NAME} MODULE ${SOURCES} )
-
-target_include_directories( ${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/3rd/pybind11/include )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${MODULE_NAME} )
 
